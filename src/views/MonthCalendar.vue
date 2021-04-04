@@ -7,7 +7,7 @@
             <h2>選擇日期</h2>
         </section>
 
-        <h4>{{year + ' / ' + month}}</h4>
+        <h4 class="currentDate">{{year + ' / ' + month}}</h4>
         <table>
             <thead>
                 <tr>
@@ -19,37 +19,35 @@
   </header>
   <main class="mainContainer">
     <div>
-    <table>
-        <tbody>
-            <tr v-for="row in Math.ceil(arr.length / 7)" :key="row">
-                <td 
-                    v-for="col in 7" 
-                    :key="col"
-                    :class="{ isToday: (col-1) + 7*(row-1) + 1 === currentDay , 
-                        circle: selected === (col-1) + 7*(row-1) }"
-                    @click="selected = (col-1) + 7*(row-1)">
-                    {{ arr[(col-1) + 7*(row-1)] }}</td>
-            </tr>
-        </tbody>
-    </table>
-    <h4>{{nyear + ' / ' + nmonth}}</h4>
-    <table class="nextMonth">
-        <tbody>
-            <tr v-for="row in Math.ceil(narr.length / 7)" :key="row">
-                <td 
-                    v-for="col in 7" 
-                    :key="col"
-                    :class="{  circle: selected === (col-1) + 7*(row-1) + dayCount }"
-                    @click="selected = (col-1) + 7*(row-1) + dayCount">
-                    {{ narr[(col-1) + 7*(row-1)] }}</td>
-            </tr>
-        </tbody>
-    </table>
-    <router-link :to="{ name: 'CalendarSelect', params: { select: selected+1 } }">
-        <button
-            class="choise" 
-            :class="{ dis: selected > dayCount}">選擇</button>
-    </router-link>
+        <table class="currentMonth">
+            <tbody>
+                <tr v-for="row in Math.ceil(arr.length / 7)" :key="row">
+                    <td 
+                        v-for="col in 7" 
+                        :key="col"
+                        :class="{ isToday: (col-1) + 7*(row-1) === currentDay + firstWhite , 
+                            circle: selected === (col-1) + 7*(row-1) }"
+                        @click="selected = (col-1) + 7*(row-1)">
+                        {{ arr[(col-1) + 7*(row-1)] }}</td>
+                </tr>
+            </tbody>
+        </table >
+        <h4>{{nyear + ' / ' + nmonth}}</h4>
+        <table class="nextMonth">
+            <tbody>
+                <tr v-for="row in Math.ceil(narr.length / 7)" :key="row">
+                    <td 
+                        v-for="col in 7" 
+                        :key="col"
+                        :class="{ circle: selected === (col-1) + 7*(row-1) + dayCount.length }"
+                        @click="selected = (col-1) + 7*(row-1) + dayCount.length">
+                        {{ narr[(col-1) + 7*(row-1)] }}</td>
+                </tr>
+            </tbody>
+        </table>
+        <router-link :to="{ name: 'CalendarSelect', params: { select: selected - white + 1} }">
+            <button class="choise" >選擇</button>
+        </router-link>
     
     </div>
 
@@ -58,36 +56,60 @@
 </template>
 
 <script>
-import { ref } from 'vue'
+import { ref, onUpdated } from 'vue'
 import handleCalendar from '../functions/handleCalendar'
 export default {
     setup() {
         let selected = ref(null)
         let dayCount = ref(null)
+        let firstWhite = ref(0)
+        let secondWhite = ref(0)
+        let white = ref(0)
         let f = false
         let t = true
 
 
         const { year, month, arr, currentDay } = handleCalendar(f)
+        const { year:nyear, month:nmonth, arr:narr, currentDay:ncurrentDay } = handleCalendar(t)
 
-        dayCount.value = arr
+        dayCount.value = [...arr]
 
         for(let e of dayCount.value) {
             if(e === ' ') {
-                dayCount.value.shift
+                firstWhite.value++
+                dayCount.value.shift()
             }
         }
+        dayCount.value.shift()
 
-        const { year:nyear, month:nmonth, arr:narr, currentDay:ncurrentDay } = handleCalendar(t)
 
-        return { year, month, arr, currentDay, selected,
-                nyear, nmonth, narr, ncurrentDay, dayCount  }
+        for(let e of narr) {
+            if(e === ' ') {
+                secondWhite.value++
+            }
+        }
+        onUpdated(() => {
+            if(selected.value > dayCount.value.length) {
+                white.value = secondWhite.value
+            } else {
+                white.value = firstWhite.value
+            }
+        })
+
+
+        
+
+        return { year, month, arr, currentDay, selected, white, 
+                nyear, nmonth, narr, ncurrentDay, dayCount, firstWhite, secondWhite  }
     },
 }
 </script>
 
 <style scoped>
     h4 {
+        margin: 0;
+    }
+    .currentDate {
         margin: 0 0 20px;
     }
     h2 {
@@ -127,8 +149,11 @@ export default {
         padding: 10px;
         cursor: pointer;
     }
-    .nextMonth h4{
-        width: 100px;
+    .currentMonth {
+        margin-bottom: 20px;
+    }
+    .nextMonth {
+        margin-bottom: 100px;
     }
     .isToday {
         color: green;
@@ -140,6 +165,9 @@ export default {
         background-color: #7F74B4;
     }
     .choise {
+        position: absolute;
+        bottom: 2rem;
+        left: 40%;
         border: none;
         font-size: 1.3rem;
         background-color: #7F74B4;
@@ -148,8 +176,5 @@ export default {
         padding: 10px 20px;
         border-radius: 20px;
         cursor: pointer;
-    }
-    .dis {
-        display: none;
     }
 </style>

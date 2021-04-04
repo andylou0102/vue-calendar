@@ -1,14 +1,11 @@
 <template>
-    <table class="scedule">
-        <tr v-for="j in 24" :key="j">
-            <td style="width: 50px; background-color: white">{{ `${j}:00` }}</td>
-            <td
-                :class="{ timePeriod: aMonth[j-1][j][day-1].style}" 
-                style="width: 25vw;">
-                  {{ aMonth[j-1][j][day-1].data }}
-            </td>   
-        </tr>
-    </table>
+    <div v-for="i in 24" :key="i" class="scedule">
+        <div class="timeArea">{{ `${i}:00` }}</div>
+        <div class="actArea"
+            :class="{ timePeriod: storeData[i-1][i][day-1].style}" >
+                {{ storeData[i-1][i][day-1].data }}
+        </div>
+    </div>
     <button class="reserve"
             @click="showForm">
             + 新增預約</button>
@@ -94,15 +91,20 @@ export default {
                 active: active.value
             })   
         }
-        
+        console.log(store.state.aMonth)
         return { showForm, closeForm, formVisible, day,
                 recTodo, recDate, recStart, recEnd, reserveSuccess, 
-
-                aMonth: computed(() => store.state.aMonth) }
+                storeData: computed(() => store.state.storeData) }
     }
 
 }
 </script>
 
-<style>
+<style scoped>
+    .scedule .timeArea{
+        flex: 1;
+    }
+    .scedule .actArea{
+        flex: 7;
+    }
 </style>

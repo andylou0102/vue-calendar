@@ -2,19 +2,19 @@
   <div class="popupWin" >
     <button class="clsbtn" @click="close">x</button>
     <form class="resForm" @submit.prevent="confirm">
-        <label for="todo">活動:
+        <label for="todo">activity:
             <input type="text" id="todo" @change="todo">
         </label>
-        <label for="date">日期:
+        <label for="date">date:
             <input type="date" id="date" placeholder="select day of current month" @change="date" >
         </label>
-        <label for="start">開始時間:
-            <input type="time" id="start" @change="start">
+        <label for="start">start:
+            <input type="time" id="start" placeholder="" @change="start">
         </label>
-        <label for="end">結束時間:
+        <label for="end">end:
             <input type="time" id="end" @change="end">
         </label>
-        <button>確定</button>
+        <button>Submit</button>
     </form>
   </div>
 
@@ -49,9 +49,10 @@ export default {
 
 <style>
     .popupWin {
+        width: 50%;
         position: absolute;
-        left: 25%;
-        top: 40%;
+        left: 27%;
+        top: 30%;
         padding: 1rem;
         border-radius: 10px;
         border: 3px solid gray;
@@ -73,16 +74,34 @@ export default {
         margin-top: 1rem;
     }
     .resForm label {
-        display: block;
+        display: inline-block;
+        width: 100%;
+        font-size: .9rem;
         margin: 10px 0;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #555;
+        margin-bottom: 10px;
+    }
+    .resForm input {
+        display: block;
+        width: 80%;
+        border: none;
+        border-bottom: 1px solid #ddd;
+        padding: 5px 15px;
+        outline: none;
+        margin-top: 5px;
     }
     .resForm button {
-        margin-left: 40%;
-        border-radius: 10px;
-        padding: 5px;
-    }
-    .resForm button:hover {
+        margin-left: 30%;
+        border-radius: 20px;
+        padding: 10px;
         background: #7F74B4;
         color: white;
+        letter-spacing: 1.5px;
+    }
+    .resForm button:hover {
+        background: #7167a3;
+        color: rgb(224, 224, 224);
     }
 </style>

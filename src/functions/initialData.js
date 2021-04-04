@@ -1,11 +1,9 @@
 import handleCalendar from './handleCalendar'
 
-let f = false
-const { year, month, arr, currentDay } = handleCalendar(f)
-
 const data = []
 
-function initialData() {
+function initialData(t) {
+    const { year, month, arr, currentDay } = handleCalendar(t)
     for(let i = 1; i <= 24; i++) {
         data.push({ [i]: [] })
     }

@@ -1,14 +1,13 @@
 <template>
-  <table class="scedule">
-      <tr v-for="j in 24" :key="j">
-          <td style="width: 50px; background-color: white;">{{ `${j}:00` }}</td>
-          <td v-for="i in aMonth[0][1].length" 
-              :key="i"
-              :class="{ timePeriod: aMonth[j-1][j][i-1].style}" >
-                {{ aMonth[j-1][j][i-1].data }}
-          </td>   
-      </tr>
-  </table>
+  <div v-for="i in 24" :key="i" class="scedule">
+      <div class="timeArea">{{ `${i}:00` }}</div>
+      <div class="actArea" 
+        v-for="j in 7" 
+        :key="j"
+        :class="{ timePeriod: storeData[i-1][i][date+j-2].style}" >
+            {{ storeData[i-1][i][date+j-2].data }}
+      </div>
+  </div>
   <button class="reserve"
           @click="showForm">
           + 新增預約</button>
@@ -26,8 +25,9 @@ import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
 import Form from './Form.vue'
 export default {
+    props:[ 'select' ],
     components: { Form },
-    setup() {
+    setup(props) {
         const formVisible = ref(false)
         let active = ref('')
         let uDate = ref('')
@@ -35,6 +35,9 @@ export default {
         let endT = ref('')
         
         const store = useStore()
+        const date = computed(() => {
+            return props.select
+        })
 
         function showForm() {
             formVisible.value = true
@@ -88,32 +91,32 @@ export default {
                 active: active.value
             })   
         }
-        return { showForm, closeForm, formVisible, 
+        return { showForm, closeForm, formVisible, date,
                 recTodo, recDate, recStart, recEnd, reserveSuccess, 
-                aMonth: computed(() => store.state.aMonth) }
+                storeData: computed(() => store.state.storeData) }
     }
 }
 </script>
 
 <style>
   .scedule {
-      table-layout:fixed;
-      padding: 5px;
-      border-spacing: 10px;
-      background-color: white;
+      background-color: rgb(240, 240, 240);
+      display: flex;
   }
-  .scedule tr {
-      margin: 10px;
-      text-align: left;
-  }
-  .scedule td {
-      width: 80px;
-      height: 70px;
+  .scedule div {
+      flex: 1 1 0%;
+      width: 38px;
+      height: 80px;
       word-break: break-all;
-      background-color: rgb(235, 235, 235);
+      border: 1px solid #ddd;
   }
-  .scedule td:hover {
-      background-color: rgb(219, 219, 219);
+  .scedule .actArea:hover {
+      background-color: rgb(196, 196, 196);
+  }
+  .scedule .timeArea {
+      border: none;
+      border-bottom: 2px solid #ddd;
+      line-height: 120px;
   }
   .reserve {
       border: none;
@@ -128,6 +131,6 @@ export default {
       cursor: pointer;
   }
   .scedule .timePeriod {
-      background-color: rgb(219, 219, 219);
+      background-color: rgb(194, 194, 194);
   }
 </style>
